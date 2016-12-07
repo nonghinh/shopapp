@@ -6,3 +6,5 @@ function confirmDelete () {
 		return true;
 	return false;
 }
+
+$('.alert-delay').delay(3000).slideUp();

@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdateAccountRequest;
 use App\User;
+use Auth;
+use Request;
 
 class UserController extends Controller
 {
@@ -16,10 +20,10 @@ class UserController extends Controller
     	$user = new User;
     	$user->name = $req->username;
     	$user->email = $req->email;
-    	$user->password = $req->password;
+    	$user->password = bcrypt($req->password);
     	$user->save();
 
-    	return redirect('goto/backend/users/show');
+    	return redirect('goto/backend/user/show');
     }
     public function show(){
     	$users = User::all();
@@ -31,15 +35,8 @@ class UserController extends Controller
     	return view('backend.users.edit', compact('user'));
     }
 
-    public function update($id, Request $req){
+    public function update($id, UpdateUserRequest $req){
     	$user = User::find($id);
-
-    	$this->validate($req, [
-    		'username' => 'required|min:3|unique:users,name,'.$id,
-    		'email' => 'required|email|unique:users,email,'.$id,
-    		'password' => 'required|min:6',
-    		'password_again'=> 'same:password'
-    		]);
     	$user->name = $req->username;
     	$user->email = $req->email;
     	$user->password = $req->password;
@@ -49,9 +46,71 @@ class UserController extends Controller
 
     }
 
-    public function delete($id){
+    public function destroy($id){
     	$user = User::find($id);
     	$user->delete();
     	return redirect('goto/backend/user/show');
+    }
+
+    public function updateAccount(){
+
+        if(Request::ajax()){
+            $name = Request::get('username');
+            $check = User::where('name',$name)->first();
+            if(!$check){
+                $user = User::find(Auth::user()->id);
+                $user->name = $name;
+                $user->save();
+                return 'success';
+            }
+
+            return 'existsed';
+        }
+    }
+
+    public function updateEmail(){
+
+        if(Request::ajax()){
+            $email = Request::get('email');
+            if(filter_var($email, FILTER_VALIDATE_EMAIL)){
+                $check = User::where('email', $email)->first();
+                if(!$check){
+                    $user = User::find(Auth::user()->id);
+                    $user->email = $email;
+                    $user->save();
+
+                    return 'success';
+                }
+                else
+                     return 'existsed';
+            }
+
+            return 'notEmail';
+        }
+    }
+    public function updatePassword(Request $req){
+         if(Request::ajax()){
+            $oldpass = Request::get('oldpass');
+            $newpass = Request::get('newpass');
+            $repass = Request::get('repass');
+            
+           if (Auth::attempt(['password' => $oldpass])) {
+                
+                if(strlen($newpass) > 3){
+                    if($newpass == $repass){
+                        $user = User::find(Auth::user()->id);
+                        $user->password = Hash::make($newpass);
+                        $user->save();
+                        return 'success';
+                    }
+                    else
+                        return 'notmath';
+                }
+                else{
+                    return 'tooshort';
+                }
+            }
+            return 'wrongpass';
+        }
     }
 }

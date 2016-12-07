@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Search Restaurant | @yield('title')</title>
+    <title>@yield('title') | Search Restaurant</title>
 
     <!-- Bootstrap -->
     <link href="{!! url('assets/vendors/bootstrap/dist/css/bootstrap.min.css') !!}" rel="stylesheet">
@@ -20,6 +20,7 @@
 
     <!-- Custom styling plus plugins -->
     <link href="{!! url('assets/build/css/custom.min.css') !!}" rel="stylesheet">
+    <link href="{!! url('assets/css/backend.css') !!}" rel="stylesheet">
   </head>
 
   <body class="nav-md">
@@ -28,13 +29,13 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Gentellela Alela!</span></a>
+              <a href="{{ url('/') }}" class="site_title"><i class="fa fa-paw"></i> <span>ZbHeeng</span></a>
             </div>
 
-            <div class="clearfix"></div>
+            <!-- <div class="clearfix"></div> -->
 
             <!-- menu profile quick info -->
-            <div class="profile">
+            <!-- <div class="profile">
               <div class="profile_pic">
                 <img src="images/img.jpg" alt="..." class="img-circle profile_img">
               </div>
@@ -42,7 +43,7 @@
                 <span>Welcome,</span>
                 <h2>John Doe</h2>
               </div>
-            </div>
+            </div> -->
             <!-- /menu profile quick info -->
 
             <br />
@@ -83,6 +84,11 @@
                 <div class="x_panel">
                   <div class="x_title">
                     <small>@include('backend.blocks.errors')</small>
+                    @if(Session::has('flash_message'))
+                      <div class="alert alert-{!! Session::get('flash_level')!!} alert-delay">
+                        {!! Session::get('flash_message') !!}
+                      </div>
+                    @endif
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -106,7 +112,7 @@
         <!-- footer content -->
         <footer>
           <div class="pull-right">
-            Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+            ZbHeeng - Admin Manager &copy; 2016
           </div>
           <div class="clearfix"></div>
         </footer>

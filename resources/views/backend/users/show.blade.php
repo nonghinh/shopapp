@@ -8,6 +8,11 @@ Show all user
 @stop
 
 @section('content')
+	<div class="row">
+		<div class="col-sm-12">
+			<a href="{!! url('goto/backend/user/add')!!}" title="Add new user" class="btn btn-default"><i class="fa fa-plus fa-fw"></i> Add new user</a>
+		</div>
+	</div>
 	<table class="table table-striped">
 		<thead>
 			<tr>

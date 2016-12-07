@@ -1,0 +1,58 @@
+.dangerLink{
+	color: #ff5050;
+	font-weight: bold;
+}
+.dangerLink:hover,
+.dangerLink:focus{
+	color: #e60000;
+
+}
+.alert{
+	border-radius: 2px;
+}
+.current-icon img{
+	width: 50px;
+	height: 50px;
+	background: #ffffff;
+	border-radius: 50%;
+}
+
+img.table-img{
+	max-width: 40px;
+	max-height:  40px;
+}
+.panel{
+	border-radius: 2px;
+}
+/*==Custom color ====*/
+.text-lg{
+	font-size: 32px;
+}
+.text-white{
+	color: #ffffff;
+}
+.green{
+	background: #00cc99;
+	color: #fff;
+}
+.blue{
+	background: #3399ff;
+	color: #fff;
+}
+.red{
+	background: #ff1a1a;
+	color: #fff;
+}
+.yellow{
+	background: #ff9900;
+	color: #fff;
+}
+.text-white{
+	color: #fff;
+}
+.huge{
+	font-size: 40px;
+}
+.panel-data{
+
+}
