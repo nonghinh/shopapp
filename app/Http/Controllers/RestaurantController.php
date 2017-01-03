@@ -38,8 +38,8 @@ class RestaurantController extends Controller
         $rest->description_place = !empty($req->description_place) ? $req->description_place : '';
         $rest->location = !empty($req->location) ? $req->location : geocodeLocation($req->address);
         $rest->capacity = !empty($req->capacity) ? $req->capacity : 0;
-        $rest->opening_time = $req->opening_time_hours.':'.$req->opening_time_minute;
-        $rest->closing_time = $req->closing_time_hours.':'.$req->closing_time_minute;
+        $rest->opening_time = $req->openingtime_hours.':'.$req->openingtime_minute;
+        $rest->closing_time = $req->closingtime_hours.':'.$req->closingtime_minute;
         $rest->last_order_time = $req->last_order_time_hours.':'.$req->last_order_time_minute;
         $rest->min_price = !empty($req->min_price) ? $req->min_price : 0;
         $rest->max_price = !empty($req->max_price) ? $req->max_price : 0;
@@ -169,6 +169,10 @@ class RestaurantController extends Controller
     public function destroy($slug, $id){
         $rest = Restaurant::find($id);
         $latLng = $rest->location;
+        $file = 'upload/covers/'.$rest->cover_image;
+        if(File::exists($file)){
+                File::delete($file);
+            }
         $rest->delete();
         $redis = LRedis::connection();
         list($lat, $lng) = explode(",", $latLng);

@@ -37,4 +37,19 @@
       </li>
     </ul>
   </li>
+  <li class="no-padding">
+    <ul class="collapsible collapsible-accordion">
+      <li>
+        <a class="collapsible-header waves-effect">Khoảng cách<i class="material-icons right">arrow_drop_down</i></a>
+        <div class="collapsible-body">
+          <ul class="blue-grey darken-1">
+              <li><a href="{{url('loc-khoang-cach/2')}}"><i class="material-icons left">update</i>2 km gần nhất</a></li>
+              <li><a href="{{url('loc-khoang-cach/3')}}"><i class="material-icons left">update</i>3 km gần nhất</a></li>
+              <li><a href="{{url('loc-khoang-cach/5')}}"><i class="material-icons left">update</i>5 km gần nhất</a></li>
+              <li><a href="{{url('loc-khoang-cach/10')}}"><i class="material-icons left">update</i>10 km gần nhất</a></li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </li>
 </ul>

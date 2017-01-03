@@ -6,6 +6,8 @@
       <a href="#" data-activates="slide-out-r" class="button-collapse-r right"><i class="material-icons">apps</i></a>
 
       <ul class="right hide-on-med-and-down">
+        <li><a href="#aboutus" class="modal-trigger waves-effect waves-light">Giới thiệu</a></li>
+        <li><a href="{!! url('/phan-hoi')!!}" title="">Phản hồi</a></li>
         @if(Auth::guest())
           <li><a href="{!! url('/dang-nhap') !!}" class="waves-effect waves-light btn blue-grey lighten-2">Đăng nhập</a></li>
           <li><a href="{!! url('/dang-ky') !!}" class="waves-effect waves-light btn blue-grey darken-1">Đăng ký</a></li>

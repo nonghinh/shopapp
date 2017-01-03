@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Request;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\FeedbackRequest;
 use App\User;
 use Carbon\Carbon;
 use LRedis;
@@ -14,6 +15,9 @@ use App\Events;
 use App\Cates;
 use App\EventRestaurant;
 use Auth;
+use Mail;
+use Session;
+use App\Mail\FeedbackMail;
 
 class HomeController extends Controller
 {
@@ -101,9 +105,7 @@ class HomeController extends Controller
     public function searchCate($slug, $id){
 
         $active = 0;
-        if(isset($_GET['slug']) && isset($_GET['id'])){
-            $active = $_GET['id'];
-        }
+ 
         $locations = Restaurant::all();
         $cates = Cates::find($id);
         $eventType = Events::all();
@@ -125,12 +127,10 @@ class HomeController extends Controller
 
     public function searchEvent($slug, $id){
         $active = 0;
-        if(isset($_GET['slug']) && isset($_GET['id'])){
-            $active = $_GET['id'];
-        }
+      
         $locations = Restaurant::all();
-        $cates = Cates::find($id);
-        $eventType = Events::all();
+        $cates = Cates::all();
+        $eventType = Events::find($id);
         $eventR = [];
         $now = Carbon::now();
         foreach($locations as $locate){
@@ -147,12 +147,64 @@ class HomeController extends Controller
         return view('frontend.home', compact('jsonLocations', 'jsonEvent', 'jsonEventType', 'jsonCates', 'active'));
     }
 
+    public function filterDistance($km){
+        $met = $km*1000;
+        $rest = Restaurant::all();
+        $curr = Session::get('clientPosition');
+ 
+        $currLat = (float)explode(',', $curr)[0];
+        $currLng = (float)explode(',', $curr)[1];
+        $data = [];
+        foreach ($rest as $val) {
+            $lat = (float)explode(',', $val->location)[0];
+            $lng = (float)explode(',', $val->location)[1];
+            if(caclDistance($currLat, $currLng, $lat, $lng)  <= $met){
+                $data[] = $val;
+            }
+        }
+        //==========
+        $active = 0;
+        if(isset($_GET['slug']) && isset($_GET['id'])){
+            $active = $_GET['id'];
+        }
+
+        $cates = Cates::all();
+        $eventType = Events::all();
+        $eventR = [];
+        $now = Carbon::now();
+        foreach($data as $locate){
+            $item = EventRestaurant::where('restaurant_id', $locate->id)->where('start_time','<=', $now)->where('end_time', '>', $now)->first();
+            if($item){
+                $eventR[] = $item;
+            }
+        }
+        $jsonCates = json_encode($cates);
+        $jsonEvent = json_encode($eventR);
+        $jsonLocations = json_encode($data);
+        $jsonEventType = json_encode($eventType);
+
+        return view('frontend.home', compact('jsonLocations', 'jsonEvent', 'jsonEventType', 'jsonCates', 'active'));
+    }
+
     public function findNearestLocaion(){
         $sql = "SELECT *, ( 3959 * acos( cos( radians(37) ) * cos( radians( lat ) ) * 
             cos( radians( lng ) - radians(-122) ) + sin( radians(37) ) * 
             sin( radians( lat ) ) ) ) AS distance FROM your_table_name HAVING
             distance < 25 ORDER BY distance LIMIT 0 , 20;";
         $data = DB::select(DB::raw($sql))->get();
+    }
+
+    public function getClientPosition(){
+        if(Request::ajax()){
+            $lat = Request::get('lat');
+            $lng = Request::get('lng');
+
+            if(!Session::has('clientPosition')){
+                Session::put('clientPosition', $lat.','.$lng);
+            }
+
+            return Session::get('clientPosition');
+        }
     }
 
     public function getDataSearch(){
@@ -181,5 +233,32 @@ class HomeController extends Controller
         $jsonEvent = json_encode($eventR);
         $jsonLocations = json_encode($locations);
         $jsonEventType = json_encode($eventType);
+    }
+
+    public function fbComment(){
+        if(Request::ajax()){
+            $slug = Request::get('slug');
+            $id = Request::get('id');
+
+            return 'ggg';
+        }
+    }
+
+    public function feedback(){
+        return view('frontend.feedback');
+    }
+
+    public function sendFeedback(FeedbackRequest $req){
+        $name = $req->name;
+        $email = $req->email;
+        $content = $req->content;
+
+        /*
+        * @mail Feedback has 3 property: $name, $email, $content are required
+        */
+        Mail::to('hinh129@gmail.com')->send(new FeedbackMail($name, $email, $content));
+        echo '<script> alert("Cám ơn bạn đã góp ý, chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất."); window.location="'.url('/').'"</script>';
+
+            //return $email;
     }
 }

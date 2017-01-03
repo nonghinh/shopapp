@@ -17,7 +17,7 @@ Show all category
 				<th>#</th>
 				<th>Category name</th>
 				<th>Parent category</th>
-				<th colspan="2">Actions</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -35,12 +35,10 @@ Show all category
 					@endif
 				</td>
 				<td>
-					<a href="{!! url('goto/backend/cate/edit/'.$cate->id)!!}" >
+					<a href="{!! url('goto/backend/cate/edit/'.$cate->id)!!}" class="edit" >
 						<i class="fa fa-pencil fa-fw"></i> Edit
 					</a>
-				</td>
-				<td>
-					<a href="{!! url('goto/backend/cate/delete/'.$cate->id)!!}" onclick="return confirmDelete()" class="dangerLink">
+					<a href="{!! url('goto/backend/cate/delete/'.$cate->id)!!}" onclick="return confirmDelete()" class="dangerLink delete">
 						<i class="fa fa-trash fa-fw"></i> Delete
 					</a>
 				</td>

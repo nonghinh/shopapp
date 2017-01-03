@@ -56,3 +56,19 @@ img.table-img{
 .panel-data{
 
 }
+.edit{
+	color: #0099ff;
+}
+.edit:hover,
+.edit:focus{
+	color: #006bb3;
+}
+
+.delete{
+	margin-left: 10px;
+	color: #ff6666;
+}
+.delete:hover,
+.delete:focus{
+	color: #e60000;
+}

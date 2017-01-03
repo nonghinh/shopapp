@@ -8,24 +8,32 @@ var mapCanvas = document.getElementById("map");
 var newLocation = null;
 var infoWindow;
 
-function initMap(){
+var directionsDisplay;
+var directionsService = new google.maps.DirectionsService();
 
-	var LatLng = new google.maps.LatLng(21.586608, 105.805963);
+function initMap(){
+	directionsDisplay = new google.maps.DirectionsRenderer();
+	var LatLng;
 	var zoom = 11;
+	//console.log(active);
 	if(active != 0){
 		for(var i = 0; i < jsonLocations.length; i++){
+			console.log(jsonLocations[i].id);
 			if(jsonLocations[i].id == active){
 				var lat = jsonLocations[i].location.split(',')[0];
 				var lng = jsonLocations[i].location.split(',')[1];
-				console.log(typeof parseFloat(lat));
-				console.log(lng);
+				console.log(parseFloat(lat));
+				console.log(lat);
 				LatLng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
-				zoom = 14;
-				alert('asdadad');
+				zoom = 18;
+				break;
 			}
 		}
-		console.log(jsonLocations[1]);
 	}
+	else{
+		LatLng = new google.maps.LatLng(21.586608, 105.805963);
+	}
+	console.log('ghgf '+zoom);
 	var mapOptions = {
 		center: LatLng,
 		zoom: zoom,
@@ -33,17 +41,9 @@ function initMap(){
 	};
 
 	map = new google.maps.Map(mapCanvas, mapOptions);
-	var marker = new google.maps.Marker({
-		position: new google.maps.LatLng(21.586608, 105.805963),
-		title: 'Vị trí hiện tại',
-		icon: _dir+'/upload/event/mylocation.png'
-	});
-	marker.setMap(map);
-	if(active == 0){
-		geolocation(map, infoWindow);
-	}
+	directionsDisplay.setMap(map);
 	showAllMarker();
-
+	geolocation(map, infoWindow, active);
 }
 google.maps.event.addDomListener(window, 'load', initMap);
 
@@ -247,13 +247,14 @@ function addNewMarker(data, eventRest = null){
 //function show infomation of marker when we click to it
 function showInfo(marker, data, eventData, eventType, cateName){
 	marker.addListener('click', function(){
-		window.history.pushState("", "", _dir+'?slug='+data.slug+'&id='+data.id);
+		//window.history.pushState("", "", _dir+'?slug='+data.slug+'&id='+data.id);
 		map.panTo(new google.maps.LatLng(this.position.lat(), this.position.lng()))
-		smoothZoom(map, 15, map.getZoom());
+		smoothZoom(map, 18, map.getZoom());
 		this.setAnimation(google.maps.Animation.BOUNCE);
 		var infoContent = '';
 			infoContent += '<p><strong>'+data.name+'</strong></p>';
-			infoContent += '<a href="#modalInfoMarker" class="btn btn-flat">Chi tiết</a>';
+			infoContent += '<a href="#modalInfoMarker" class="btn btn-flat teal-text">Chi tiết</a>';
+			infoContent += '<a class="btn btn-flat blue-text" href="#" onclick="routeTravel('+this.position.lat()+','+this.position.lng()+')">Chỉ đường</a>';
 		infoWindow = new google.maps.InfoWindow({
 			map: map,
 			content: infoContent,
@@ -261,39 +262,79 @@ function showInfo(marker, data, eventData, eventType, cateName){
 		});
 		$('#modalInfoMarker .pointContent').html(data.address);
 		$('#modalInfoMarker .coverImg').attr('src', _dir+'/upload/covers/'+data.cover_image);
-		$('#modalInfoMarker #basicInfo .location').html(data.name);
-		$('#modalInfoMarker #basicInfo .address').html(data.address);
-		$('#modalInfoMarker #basicInfo .email').html(data.email);
-		$('#modalInfoMarker #basicInfo .phone').html(data.phone);
-		$('#modalInfoMarker #basicInfo .website').html(data.website);
+		$('#modalInfoMarker .m-title').html(data.name);
+
 		var starttime = data.opening_time == ':' ? '00:00' : data.opening_time;
 		var endtime = data.closing_time == ':' ? '00:00' : data.closing_time;
 		var worktime = '<strong>Từ :<strong>'+starttime+'<strong> đến: </strong>'+endtime;
-		$('#modalInfoMarker #basicInfo .description').html(data.opening_time);
-		$('#modalInfoMarker #basicInfo .capacity').html(data.capacity);
-		$('#modalInfoMarker #basicInfo .work_time').html(worktime);
+
+		var infor = '<p>';
+			infor += '<strong>'+data.name+'</strong>';
+			infor += ' nằm ở '+data.address;
+			infor += ' và có sứ chứa khoảng '+data.capacity+' người.';
+			infor += '</p>';
+			infor += '<p>'+data.description_place+'</p>';
+			infor += '<p>';
+			infor += ' Quán mở cửa từ <strong>'+starttime+'</strong> đến <strong>'+endtime+'</strong>,';
+			infor += ' cho order muộn nhất là vào lúc <strong>'+data.last_order_time+'</strong> mỗi ngày.';
+			infor += ' Giá các đồ ăn ở đây khoảng từ <strong>'+data.min_price+' <strong>đến </strong>'+data.max_price+' đồng.';
+			infor += '</p>';
+			$('#modalInfoMarker #basicInfo').html(infor);
+
+		var contact = '<br><strong>Địa chỉ:</strong> '+data.address+ ' - <strong>Email:</strong> '+data.email+' - <strong>Điện thoại:</strong> '+data.phone+' - <strong>Website:</strong> '+data.website;
+		$('#modalInfoMarker #loc-info .contact').html(contact);
 
 		if(eventData != null && eventType != null && cateName != null){
-			$('#modalInfoMarker #eventInfo .pointBody').show();
-			$('#modalInfoMarker #eventInfo .alert').html('');
-			$('#modalInfoMarker #basicInfo .last_order_time').html(data.last_order_time);
-			$('#modalInfoMarker #basicInfo .price').html('<strong>Từ: </strong>'+data.min_price+' <strong>đến :</strong>'+data.max_price);
-			$('#modalInfoMarker #eventInfo .eventname').html(eventData.name);
-			$('#modalInfoMarker #eventInfo .eventtype').html(eventType);
-			$('#modalInfoMarker #eventInfo .eventcate').html(cateName);
-			$('#modalInfoMarker #eventInfo .eventinfo').html(eventData.info_event);
-			$('#modalInfoMarker #eventInfo .starttime').html(eventData.start_time);
-			$('#modalInfoMarker #eventInfo .endtime').html(eventData.end_time);
+
+			var eventInfo = '<h3 class="pink-text">'+eventData.name+'</h3>';
+				eventInfo += '<p>';
+				eventInfo += 'Chủ đề <strong>'+cateName+'</strong> ';
+				eventInfo += eventType+' các món ăn, đồ uống, '+eventData.info_event;
+				eventInfo += '</p>';
+				eventInfo += '<p>Sự kiện diễn ra từ <strong>'+eventData.start_time+'</strong> đến <strong>'+eventData.end_time+'</strong></p>';
+				$('#modalInfoMarker #eventInfo').html(eventInfo);
 		}
-		else{
-			$('#modalInfoMarker #eventInfo .pointBody').hide();
-			$('#modalInfoMarker #eventInfo .alert').html('Không có sự kiện');
-		}
-		
+		var href =  _dir+'?slug='+data.slug+'&id='+data.id;
+		var fb = $('#fbComment');
+		fb.show(400);
+			fb.html('<div class="fb-comments" data-href="'+href+'" data-colorscheme="light" data-numposts="5" data-width="100%"></div>');
+			FB.XFBML.parse(fb[0]);
 		//$('#modalInfoMarker').modal('open');
 	});
 }
 
+function routeTravel(lat, lng){
+	if (navigator.geolocation) {
+	  navigator.geolocation.getCurrentPosition(function(position) {
+	    var pos = {
+	      lat: position.coords.latitude,
+	      lng: position.coords.longitude
+	    };
+	    
+	    var start = new google.maps.LatLng(lat, lng);
+	    var end = new google.maps.LatLng(pos.lat, pos.lng);
+	    var request = {
+	      origin: start,
+	      destination: end,
+	      travelMode: google.maps.TravelMode.DRIVING
+	    };
+	    directionsService.route(request, function(response, status) {
+	      if (status == google.maps.DirectionsStatus.OK) {
+	        directionsDisplay.setDirections(response);
+	        directionsDisplay.setMap(map);
+	      } else {
+	        alert("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
+	      }
+	    });
+
+	  }, function() {
+	    handleLocationError(true, infoWindow, map.getCenter());
+	  });
+	} else {
+	  // Browser doesn't support Geolocation
+	  handleLocationError(false, infoWindow, map.getCenter());
+	}
+}
 
 function showAllMarker(){
 	var url = _dir+'/getevent';
@@ -333,6 +374,7 @@ function showAllMarker(){
 	}
 	setAllMap();
 }
+
 function addMarker(location, data, eventData, jsonEventType) {
 	var icon = _dir+'/upload/event/icon.png';
 	if(eventData != null){
@@ -368,7 +410,7 @@ function deleteMarkers() {
 }
 
 //Tìm vị trí của client sử dụng 
-function geolocation(map, infoWindow){
+function geolocation(map, infoWindow, acc){
 	// Try HTML5 geolocation.
 	if (navigator.geolocation) {
 	  navigator.geolocation.getCurrentPosition(function(position) {
@@ -376,10 +418,27 @@ function geolocation(map, infoWindow){
 	      lat: position.coords.latitude,
 	      lng: position.coords.longitude
 	    };
+	    var marker = new google.maps.Marker({
+	    	position: new google.maps.LatLng(pos.lat, pos.lng),
+			title: 'Vị trí hiện tại',
+			icon: _dir+'/upload/event/mylocation.png'
+	    });
+	    marker.setMap(map);
+	    if(acc == 0){
+	    	map.setCenter(new google.maps.LatLng(pos.lat, pos.lng));
+	    }
+	    marker.addListener('click', function(){
 
-	    // infoWindow.setPosition(pos);
-	    // infoWindow.setContent('Bạn đang ở đây.');
-	    map.setCenter(pos);
+	    	var infowindow = new google.maps.InfoWindow({
+			    content: '<strong>Bạn đang ở đây<strong>'
+			});
+			infowindow.open(map, marker);
+	    });
+	    var url = _dir+'/getClientPosition';
+	    var _token = $('#tokenHome').find('input[name="_token"]').val();
+	    $.get(url, {'_token':_token, 'lat': pos.lat, 'lng': pos.lng}, function(res){
+	    	//alert(res);
+	    });
 	  }, function() {
 	    handleLocationError(true, infoWindow, map.getCenter());
 	  });
@@ -418,7 +477,7 @@ function smoothZoom (map, max, cnt) {
         if (status == google.maps.GeocoderStatus.OK) {
             var latitude = results[0].geometry.location.lat();
             var longitude = results[0].geometry.location.lng();
-            alert("Latitude: " + latitude + "\nLongitude: " + longitude);
+            // alert("Latitude: " + latitude + "\nLongitude: " + longitude);
         } else {
             alert("Request failed.")
         }
@@ -426,24 +485,15 @@ function smoothZoom (map, max, cnt) {
 };
 
 function rad(x) {return x*Math.PI/180;}
-function find_closest_marker( event ) {
-    var lat = event.latLng.lat();
-    var lng = event.latLng.lng();
-    var R = 6371; // radius of earth in km
-    var distances = [];
-    var closest = -1;
-    for( i=0;i<map.markers.length; i++ ) {
-        var mlat = map.markers[i].position.lat();
-        var mlng = map.markers[i].position.lng();
-        var dLat  = rad(mlat - lat);
-        var dLong = rad(mlng - lng);
-        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(rad(lat)) * Math.cos(rad(lat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        var d = R * c;
-        distances[i] = d;
-        if ( closest == -1 || d < distances[closest] ) {
-            closest = i;
-        }
-    }
-}
+function getDistance(p1, p2) {
+  //var R = 6378137; // Earth’s mean radius in meter
+  var R = 6371000; // Earth’s mean radius in meter
+  var dLat = rad(p2.lat() - p1.lat());
+  var dLong = rad(p2.lng() - p1.lng());
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(rad(p1.lat())) * Math.cos(rad(p2.lat())) *
+    Math.sin(dLong / 2) * Math.sin(dLong / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c;
+  return d; // returns the distance in meter
+};

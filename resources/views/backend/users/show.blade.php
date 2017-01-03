@@ -19,7 +19,7 @@ Show all user
 				<th>#</th>
 				<th>Username</th>
 				<th>Email</th>
-				<th colspan="2">Actions</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -30,10 +30,8 @@ Show all user
 					<td>{!! $user->name !!}</td>
 					<td>{!! $user->email !!}</td>
 					<td>
-						<a href="{{ url('goto/backend/user/edit/'.$user->id) }}" title="Edit user" ><i class="fa fa-pencil fa-fw"></i> Edit</a>
-					</td>
-					<td >
-						<a href="{{ url('goto/backend/user/delete/'.$user->id) }}" title="Delete user" class="label label-danger" onclick="return confirmDelete()"><i class="fa fa-trash fa-fw"></i> Delete</a>
+						<a href="{{ url('goto/backend/user/edit/'.$user->id) }}" title="Edit user" class="edit" ><i class="fa fa-pencil fa-fw"></i> Edit</a>
+						<a href="{{ url('goto/backend/user/delete/'.$user->id) }}" title="Delete user" class="delete" onclick="return confirmDelete()"><i class="fa fa-trash fa-fw"></i> Delete</a>
 					</td>
 				</tr>
 			@endforeach

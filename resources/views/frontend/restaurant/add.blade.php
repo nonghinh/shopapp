@@ -151,7 +151,7 @@
 						</div>
 						<div class="input-field col s12">
 							<label>Giá Cao nhất</label>
-							<input type="number" name="min_price" value="0">
+							<input type="number" name="max_price" value="0">
 						</div>
 						<div class="row">
 							<div class="col s12">

@@ -46,7 +46,7 @@
 	</div>
 	<div class="row">
 		<div class="col s12">
-			<h4>Sự kiện sắp tơi</h4>
+			<h4>Sự kiện sắp tới</h4>
 			@if($eventF)
 				<ul class="collapsible" data-collapsible="accordion">
 				    @foreach($eventF as $event)

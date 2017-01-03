@@ -27,7 +27,7 @@ class RestaurantRequest extends FormRequest
             
             'name' => 'required',
             'address' => 'required|unique:restaurants,address',
-            'cover_image' => 'image',
+            'cover_image' => 'required|image',
         ];
     }
 

@@ -10,8 +10,8 @@
 					<h1>Đăng nhập</h1>
 				</div>
 				@if(Session::has('error_login'))
-					<div class="errors">
-						<p class="red-text">{{Session::get('error_login')}}</p>
+					<div class="alert alert-warning">
+						<p>{{Session::get('error_login')}}</p>
 					</div>
 				@endif
 				<form action="" method="post" accept-charset="utf-8">
@@ -38,4 +38,11 @@
 			</div>
 		</div>
 	</div>
+@stop
+@section('footer')
+	@if(Session::has('message'))
+	<script type="text/javascript">
+		Materialize.toast("{{Session::get('message')}}", 4000);
+	</script>
+	@endif
 @stop

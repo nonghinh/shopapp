@@ -17,7 +17,7 @@ Show all events
 				<th>#</th>
 				<th>Event name</th>
 				<th>Icon</th>
-				<th colspan="2">Actions</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -30,12 +30,10 @@ Show all events
 					<img class="table-img img-circle" src="{!! url('upload/event/'.$event->icon)!!}" alt="{!! $event->name !!}">
 				</td>
 				<td>
-					<a href="{!! url('goto/backend/event/edit/'.$event->id)!!}" >
+					<a href="{!! url('goto/backend/event/edit/'.$event->id)!!}" class="edit" >
 						<i class="fa fa-pencil fa-fw"></i> Edit
 					</a>
-				</td>
-				<td>
-					<a href="{!! url('goto/backend/event/delete/'.$event->id)!!}" onclick="return confirmDelete()" class="dangerLink">
+					<a href="{!! url('goto/backend/event/delete/'.$event->id)!!}" onclick="return confirmDelete()" class="dangerLink delete">
 						<i class="fa fa-trash fa-fw"></i> Delete
 					</a>
 				</td>

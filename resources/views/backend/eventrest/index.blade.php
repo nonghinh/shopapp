@@ -23,16 +23,17 @@ Show all events
 			<?php $stt = 0; ?>
 		@foreach($eventR as $item)
 			<tr>
-				<td>{{ ++$str }}</td>
+				<td>{{ ++$stt }}</td>
 				<td>{{ $item->name }}</td>
 				<td>
-					<?php $loc = DB::table('restaurant')->where('id', 'restaurant_id')->first(); ?>
+					<?php $loc = DB::table('restaurants')->where('id', $item->restaurant_id)->first(); ?>
 					{{ $loc->name }}
 				</td>
 				<td></td>
 				<td>
-					<a href="{{url('update-su-kien/'.$item->slug.'/'.$item->id)}}"><i class="fa fa-pencil"></i> Edit</a>
-					<a href="{{ url('xoa-su-kien/'.$item->slug.'/'.$item->id) }}" onclick="return confirmDelete()"><i class="fa fa-trash"></i> Delete</a>
+					<a href="{{url('update-su-kien/'.$item->slug.'/'.$item->id)}}" class="edit"><i class="fa fa-pencil"></i> Edit</a>
+					
+					<a href="{{ url('xoa-su-kien/'.$item->slug.'/'.$item->id) }}" onclick="return confirmDelete()" class="delete"><i class="fa fa-trash"></i> Delete</a>
 				</td>
 			</tr>
 		@endforeach
