@@ -63,7 +63,7 @@ class HomeController extends Controller
     	$user->level = 0;
     	$user->save();
 
-    	return 'ok';
+    	return redirect('/dang-nhap');
     }
 
     public function login(){
@@ -107,19 +107,21 @@ class HomeController extends Controller
         $active = 0;
  
         $locations = Restaurant::all();
-        $cates = Cates::find($id);
+        $cates = Cates::all();
         $eventType = Events::all();
         $eventR = [];
         $now = Carbon::now();
+        $locations1 = [];
         foreach($locations as $locate){
             $item = EventRestaurant::where('restaurant_id', $locate->id)->where('start_time','<=', $now)->where('end_time', '>', $now)->where('cate_id', $id)->first();
             if($item){
                 $eventR[] = $item;
+                $locations1[] = Restaurant::find($item->restaurant_id);
             }
         }
         $jsonCates = json_encode($cates);
         $jsonEvent = json_encode($eventR);
-        $jsonLocations = json_encode($locations);
+        $jsonLocations = json_encode($locations1);
         $jsonEventType = json_encode($eventType);
 
         return view('frontend.home', compact('jsonLocations', 'jsonEvent', 'jsonEventType', 'jsonCates', 'active'));
@@ -130,18 +132,20 @@ class HomeController extends Controller
       
         $locations = Restaurant::all();
         $cates = Cates::all();
-        $eventType = Events::find($id);
+        $eventType = Events::all();
         $eventR = [];
+        $locations1 = [];
         $now = Carbon::now();
         foreach($locations as $locate){
             $item = EventRestaurant::where('restaurant_id', $locate->id)->where('start_time','<=', $now)->where('end_time', '>', $now)->where('event_id', $id)->first();
             if($item){
                 $eventR[] = $item;
+                $locations1[] = Restaurant::find($item->restaurant_id);
             }
         }
         $jsonCates = json_encode($cates);
         $jsonEvent = json_encode($eventR);
-        $jsonLocations = json_encode($locations);
+        $jsonLocations = json_encode($locations1);
         $jsonEventType = json_encode($eventType);
 
         return view('frontend.home', compact('jsonLocations', 'jsonEvent', 'jsonEventType', 'jsonCates', 'active'));

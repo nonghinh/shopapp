@@ -73,14 +73,14 @@
 						</div>							
 						<div class="input-field col s12">
 							<strong>Thời gian bắt đầu</strong>
-							<input type="text" name="start_time" value=" {{ old('start_time', isset($eventR) ? stripTime($eventR->start_time) : '') }}" placeholder="YY-MM-DD HH:mm (Năm-Tháng-ngày Giờ:phút)">
+							<input type="text" name="start_time" value=" {{ old('start_time', isset($eventR) ? stripTime($eventR->start_time) : '') }}" placeholder="dd/MM/YY HH:mm (ngày-Tháng-năm Giờ:phút)">
 							@if (count($errors) > 0)
 								<span class="error">{!! $errors->first('start_time') !!}</span>
 							@endif
 						</div>	
 						<div class="input-field col s12">
 							<strong>Thời gian kết thúc</strong>
-							<input type="text" name="end_time" value="{{ old('end_time', isset($eventR) ? stripTime($eventR->end_time) : '') }}" placeholder="YY-MM-DD HH:mm (Năm-Tháng-ngày Giờ:phút)">
+							<input type="text" name="end_time" value="{{ old('end_time', isset($eventR) ? stripTime($eventR->end_time) : '') }}" placeholder="dd/mm/yyyy HH:mm ((ngày-Tháng-năm Giờ:phút))">
 							@if (count($errors) > 0)
 								<span class="error">{!! $errors->first('end_time') !!}</span>
 							@endif

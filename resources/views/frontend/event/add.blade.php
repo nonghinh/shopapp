@@ -63,14 +63,14 @@
 						</div>							
 						<div class="input-field col s12">
 							<strong>Thời gian bắt đầu <span class="required">*</span></strong>
-							<input type="text" name="start_time" value="" placeholder="DD-MM-YY HH:mm (Ngày-Tháng-Năm Giờ:phút)">
+							<input type="text" name="start_time" value="" placeholder="DD/MM/YY HH:mm (Ngày-Tháng-Năm Giờ:phút)">
 							@if (count($errors) > 0)
 								<span class="error">{!! $errors->first('start_time') !!}</span>
 							@endif
 						</div>	
 						<div class="input-field col s12">
 							<strong>Thời gian kết thúc <span class="required">*</span></strong>
-							<input type="text" name="end_time" value="" placeholder="YY-MM-DD HH:mm (Năm-Tháng-ngày Giờ:phút)">
+							<input type="text" name="end_time" value="" placeholder="DD/MM/YY HH:mm ((ngày-Tháng-năm Giờ:phút))">
 							@if (count($errors) > 0)
 								<span class="error">{!! $errors->first('end_time') !!}</span>
 							@endif
